@@ -6,6 +6,7 @@ import { request } from 'graphql-request';
 import { type CharacterData, type CharactersResponse } from '../../types/types';
 import { GET_CHARACTERS } from '../../graphql/queries/characters';
 import LoadingBar from '../loadingBar/LoadingBar';
+import Fallback from '../fallback/Fallback';
 
 interface MainProps {
   data: {
@@ -22,6 +23,7 @@ interface MainState {
   error: string | null;
   isLoading: boolean;
   isSearched: boolean;
+  crash: boolean;
 }
 
 class Main extends Component<MainProps, MainState> {
@@ -30,6 +32,7 @@ class Main extends Component<MainProps, MainState> {
     error: null,
     isLoading: false,
     isSearched: false,
+    crash: false,
   };
 
   fetchCharacters = async (query: string) => {
@@ -62,7 +65,15 @@ class Main extends Component<MainProps, MainState> {
     this.fetchCharacters(trimmedQuery);
   };
 
+  throwError = () => {
+    this.setState({ crash: true });
+  };
+
   render() {
+    if (this.state.crash) {
+      throw new Error('This is a test error!');
+    }
+
     const { characters, isLoading, error, isSearched } = this.state;
 
     return (
@@ -78,10 +89,11 @@ class Main extends Component<MainProps, MainState> {
               <LoadingBar />
             </div>
           )}
-          {error && <div className="text-red-500">{error}</div>}
+          {error && <Fallback text={error} />}
+
           {isSearched && <CardList items={characters} />}
         </div>
-        <Button>ERROR btn</Button>
+        <Button onClick={this.throwError}>Crash App</Button>
       </div>
     );
   }

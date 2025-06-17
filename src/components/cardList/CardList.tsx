@@ -1,12 +1,13 @@
 import { Component } from 'react';
 import type { CardListProps } from '../../types/types';
 import CharacterCard from '../characterCard/CharacterCard';
+import Fallback from '../fallback/Fallback';
 
 class CardList extends Component<CardListProps> {
   render() {
     const { items } = this.props;
     if (items.length === 0) {
-      return <p>No results found.</p>;
+      return <Fallback text="No results found." />;
     }
     return (
       <div className="flex flex-wrap gap-6 p-6 justify-center items-center">
