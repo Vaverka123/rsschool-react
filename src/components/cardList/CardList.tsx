@@ -9,7 +9,7 @@ class CardList extends Component<CardListProps> {
       return <p>No results found.</p>;
     }
     return (
-      <div className="flex flex-wrap gap-6 p-6 justify-center align-center">
+      <div className="flex flex-wrap gap-6 p-6 justify-center items-center">
         {items?.map((item) => (
           <CharacterCard
             key={item.id}
