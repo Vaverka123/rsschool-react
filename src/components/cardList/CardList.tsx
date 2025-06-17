@@ -1,6 +1,6 @@
 import { Component } from 'react';
-import PokemonCard from '../pokemonCard/PokemonCard';
 import type { CardListProps } from '../../types/types';
+import CharacterCard from '../characterCard/CharacterCard';
 
 class CardList extends Component<CardListProps> {
   render() {
@@ -9,9 +9,18 @@ class CardList extends Component<CardListProps> {
       return <p>No results found.</p>;
     }
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4  ">
-        {items.map((item) => (
-          <PokemonCard key={item.id} data={item} />
+      <div className="flex flex-wrap gap-6 p-6 justify-center items-center">
+        {items?.map((item) => (
+          <CharacterCard
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            status={item.status}
+            species={item.species}
+            image={item.image}
+            location={item.location}
+            origin={item.origin}
+          />
         ))}
       </div>
     );

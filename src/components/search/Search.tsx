@@ -17,10 +17,8 @@ class Search extends Component<SearchProps> {
 
   handleSearch = () => {
     const query = this.inputRef.current?.value.trim() || '';
-    if (query) {
-      localStorage.setItem('searchQuery', query);
-      this.props.onSearch(query);
-    }
+    localStorage.setItem('searchQuery', query);
+    this.props.onSearch(query);
   };
 
   render() {
@@ -30,7 +28,7 @@ class Search extends Component<SearchProps> {
           ref={this.inputRef}
           type="text"
           className="px-4 py-2 border rounded"
-          placeholder="name or id"
+          placeholder="enter name"
         />
         <Button onClick={this.handleSearch}>Search</Button>
       </div>
