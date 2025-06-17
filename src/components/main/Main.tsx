@@ -37,7 +37,7 @@ class Main extends Component<MainProps, MainState> {
       const data: CharactersResponse = await request(
         'https://rickandmortyapi.com/graphql/',
         GET_CHARACTERS,
-        { name: query }
+        { name: query, page: 1 }
       );
       console.log(data);
       this.setState({
