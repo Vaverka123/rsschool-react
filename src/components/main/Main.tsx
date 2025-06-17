@@ -1,20 +1,31 @@
 import { Component } from 'react';
-import axios from 'axios';
 import Search from '../search/Search';
-import CardList from '../cardList/CardList';
 import Button from '../button/Button';
-import { type PokemonData } from '../../types/types';
+import CardList from '../cardList/CardList';
+import { request } from 'graphql-request';
+import { type CharacterData, type CharactersResponse } from '../../types/types';
+import { GET_CHARACTERS } from '../../graphql/queries/characters';
+
+interface MainProps {
+  data: {
+    loading: boolean;
+    error?: Error;
+    characters?: {
+      results: CharacterData[];
+    };
+  };
+}
 
 interface MainState {
-  pokemons: PokemonData[];
+  characters: CharacterData[];
   error: string | null;
   isLoading: boolean;
   isSearched: boolean;
 }
 
-class Main extends Component<object, MainState> {
+class Main extends Component<MainProps, MainState> {
   state: MainState = {
-    pokemons: [],
+    characters: [],
     error: null,
     isLoading: false,
     isSearched: false,
@@ -23,33 +34,23 @@ class Main extends Component<object, MainState> {
   fetchCharacters = async (query: string) => {
     this.setState({ isLoading: true, error: null });
     try {
-      const response = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon/${query}`
+      const data: CharactersResponse = await request(
+        'https://rickandmortyapi.com/graphql/',
+        GET_CHARACTERS,
+        { name: query }
       );
-
-      const result = response.data;
-      console.log(result, 'result from API');
-
-      const pokemon: PokemonData = {
-        id: result.id,
-        name: result.name,
-        types: result.types.map((type: string) => type),
-        height: result.height,
-        weight: result.weight,
-        base_experience: result.base_experience,
-        abilities: result.abilities,
-        image: result.sprites.front_default,
-      };
-      const pokemons = [pokemon];
-
-      this.setState({ pokemons, isLoading: false, isSearched: true });
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Failed to fetch characters. Please try again later.';
+      console.log(data);
       this.setState({
-        error: errorMessage,
+        characters: data.characters.results || [],
+        isLoading: false,
+        isSearched: true,
+      });
+    } catch (error) {
+      this.setState({
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch characters.',
         isLoading: false,
         isSearched: true,
       });
@@ -57,27 +58,26 @@ class Main extends Component<object, MainState> {
   };
 
   handleSearch = (query: string) => {
-    if (query) {
-      localStorage.setItem('searchQuery', query);
-    } else {
-      localStorage.removeItem('searchQuery');
-    }
-    this.fetchCharacters(query);
+    const trimmedQuery = query.trim();
+    console.log(`Searching for: ${trimmedQuery}`);
+    this.fetchCharacters(trimmedQuery);
   };
 
   render() {
-    const { pokemons, error, isLoading, isSearched } = this.state;
+    const { characters, isLoading, error, isSearched } = this.state;
+
     return (
       <div className="min-h-screen bg-gray-100 p-6 space-y-6">
         <h1 className="mt-5 text-3xl font-bold text-center text-blue-700">
-          Search for your favorite Pokémons and learn more about them!
+          Search for your favorite Rick and Morty characters and learn more
+          about them!
         </h1>
         <Search onSearch={this.handleSearch} />
-        {isLoading && <div className="mt-4">Loading...</div>}
-        {!isLoading && error && (
-          <div className="mt-4 text-red-500">{error}</div>
-        )}
-        {!isLoading && !error && isSearched && <CardList items={pokemons} />}
+        <div className="mx-auto w-[90%] h-[70vh] overflow-y-auto bg-white rounded-lg shadow-md">
+          {isLoading && <div>Loading...</div>}
+          {error && <div className="text-red-500">{error}</div>}
+          {isSearched && <CardList items={characters} />}
+        </div>
         <Button>ERROR btn</Button>
       </div>
     );

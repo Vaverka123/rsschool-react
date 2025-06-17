@@ -17,10 +17,8 @@ class Search extends Component<SearchProps> {
 
   handleSearch = () => {
     const query = this.inputRef.current?.value.trim() || '';
-    if (query) {
-      localStorage.setItem('searchQuery', query);
-      this.props.onSearch(query);
-    }
+    localStorage.setItem('searchQuery', query); // Always update localStorage
+    this.props.onSearch(query); // Trigger onSearch even if the query is empty
   };
 
   render() {
