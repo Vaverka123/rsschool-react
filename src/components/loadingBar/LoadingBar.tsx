@@ -3,7 +3,11 @@ import { Component } from 'react';
 class LoadingBar extends Component {
   render() {
     return (
-      <div className="flex flex-col items-center w-full mt-8 space-y-4">
+      <div
+        className="flex flex-col items-center w-full mt-8 space-y-4"
+        role="status"
+        aria-busy="true"
+      >
         <div className="text-xl font-semibold text-gray-100 tracking-widest uppercase">
           Loading...
         </div>
