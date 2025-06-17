@@ -3,23 +3,30 @@ import type { CharacterData } from '../../types/types';
 
 class CharacterCard extends Component<CharacterData> {
   render() {
-    const { id, name, status, species, image, location, origin } = this.props;
+    const { name, status, species, image, location, origin } = this.props;
     return (
-      <div>
-        <img src={image} alt={name} />
-        <p>{`#${id}`}</p>
+      <div className=" w-[600px] h-[220px] flex bg-zinc-600 rounded overflow-hidden ">
         <div>
-          <h2>{name}</h2>
+          <img
+            src={image}
+            alt={name}
+            className="w-[230px] h-full object-cover"
+          />
+        </div>
+
+        <div className="flex flex-col justify-between p-4 flex-1 text-white">
+          <h2 className="text-xl font-semibold">{name}</h2>
+
           <h4>{`${status} - ${species}`}</h4>
           <div>
-            <p>
-              {`Location:`} <strong>{location.name}</strong>
-            </p>
+            <p className="text-sm text-gray-300">{`Location:`}</p>
+            <span>
+              <strong>{location.name}</strong>
+            </span>
           </div>
           <div>
-            <p>
-              {`Origin:`} <strong>{origin.name}</strong>
-            </p>
+            <p className="text-sm text-gray-300">{`Origin:`}</p>{' '}
+            <strong>{origin.name}</strong>
           </div>
         </div>
       </div>

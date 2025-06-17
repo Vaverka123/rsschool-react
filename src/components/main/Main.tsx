@@ -73,7 +73,7 @@ class Main extends Component<MainProps, MainState> {
           about them!
         </h1>
         <Search onSearch={this.handleSearch} />
-        <div className="mx-auto w-[90%] h-[70vh] overflow-y-auto bg-white rounded-lg shadow-md">
+        <div className="mx-auto w-[90%] h-[70vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
           {isLoading && <div>Loading...</div>}
           {error && <div className="text-red-500">{error}</div>}
           {isSearched && <CardList items={characters} />}
