@@ -5,6 +5,7 @@ import CardList from '../cardList/CardList';
 import { request } from 'graphql-request';
 import { type CharacterData, type CharactersResponse } from '../../types/types';
 import { GET_CHARACTERS } from '../../graphql/queries/characters';
+import LoadingBar from '../loadingBar/LoadingBar';
 
 interface MainProps {
   data: {
@@ -39,7 +40,6 @@ class Main extends Component<MainProps, MainState> {
         GET_CHARACTERS,
         { name: query, page: 1 }
       );
-      console.log(data);
       this.setState({
         characters: data.characters.results || [],
         isLoading: false,
@@ -59,7 +59,6 @@ class Main extends Component<MainProps, MainState> {
 
   handleSearch = (query: string) => {
     const trimmedQuery = query.trim();
-    console.log(`Searching for: ${trimmedQuery}`);
     this.fetchCharacters(trimmedQuery);
   };
 
@@ -74,7 +73,11 @@ class Main extends Component<MainProps, MainState> {
         </h1>
         <Search onSearch={this.handleSearch} />
         <div className="mx-auto w-[90%] h-[70vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
-          {isLoading && <div>Loading...</div>}
+          {isLoading && (
+            <div>
+              <LoadingBar />
+            </div>
+          )}
           {error && <div className="text-red-500">{error}</div>}
           {isSearched && <CardList items={characters} />}
         </div>
