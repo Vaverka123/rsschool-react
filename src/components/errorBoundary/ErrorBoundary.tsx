@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo } from 'react';
+import Fallback from '../fallback/Fallback';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -23,11 +24,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      return (
-        <div className="p-6 text-center text-red-500">
-          Something went wrong.
-        </div>
-      );
+      return <Fallback text=" refresh the page now!" />;
     }
 
     return this.props.children;

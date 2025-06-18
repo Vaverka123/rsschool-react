@@ -1,3 +1,21 @@
+export interface MainProps {
+  data: {
+    loading: boolean;
+    error?: Error;
+    characters?: {
+      results: CharacterData[];
+    };
+  };
+}
+
+export interface MainState {
+  characters: CharacterData[];
+  error: string | null;
+  isLoading: boolean;
+  isSearched: boolean;
+  crash: boolean;
+}
+
 export type CharacterData = {
   id: string;
   name: string;
