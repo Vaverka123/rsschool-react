@@ -101,13 +101,13 @@ class Main extends Component<MainProps, MainState> {
     const { characters, isLoading, error, isSearched } = this.state;
 
     return (
-      <div className="min-h-screen bg-gray-100 p-6 space-y-6">
-        <h1 className="mt-5 text-3xl font-bold text-center text-blue-700">
+      <div className=" bg-gray-100 p-6 space-y-6 border-2 border-blue-500 border-dashed rounded-lg m-4">
+        <h1 className="mt-5 text-3xl font-bold text-center text-blue-700 tracking-widest uppercase">
           Search for your favorite Rick and Morty characters and learn more
           about them!
         </h1>
         <Search onSearch={this.handleSearch} />
-        <div className="mx-auto w-[90%] h-[70vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
+        <div className="mx-auto w-[90%] h-[65vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
           {isLoading && (
             <div>
               <LoadingBar />
@@ -116,10 +116,12 @@ class Main extends Component<MainProps, MainState> {
           {error && <Fallback text={error} />}
           {isSearched && <CardList items={characters} />}
         </div>
-        <div className="flex justify-center space-x-4 mt-4">
+        <div className="flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4">
+          <h3 className="tracking-widest uppercase text-red-500 font-bold text-xl">
+            danger zone
+          </h3>
           <Button onClick={this.throwError}>Crash App</Button>
-          <Button onClick={this.handleBadRequest}>see 4xx response</Button>
-          <Button>see 5xx response</Button>
+          <Button onClick={this.handleBadRequest}>see 400 response</Button>
         </div>
       </div>
     );
