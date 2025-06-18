@@ -21,16 +21,50 @@ class Main extends Component<MainProps, MainState> {
     crash: false,
   };
 
+  private readonly linkURL = 'https://rickandmortyapi.com/graphql/';
+
   componentDidMount() {
     const savedQuery = localStorage.getItem('searchQuery') || '';
     this.fetchCharacters(savedQuery);
   }
 
-  fetchCharacters = async (query: string) => {
+  private startLoading = () => {
     this.setState({ isLoading: true, error: null });
+  };
+
+  private handleError = (error: unknown) => {
+    let message = 'An unexpected error occurred.';
+    if (error instanceof ClientError) {
+      const gqlErrors = error.response?.errors;
+      if (gqlErrors?.length) message = gqlErrors[0].message;
+      else
+        message = `Error code: ${error.response.status} - it is a Client Error, please check your request.`;
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
+
+    this.setState({
+      error: message,
+      isLoading: false,
+      isSearched: true,
+    });
+  };
+
+  private renderDangerZone = () => (
+    <div className="flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4">
+      <h3 className="tracking-widest uppercase text-red-500 font-bold text-xl">
+        danger zone
+      </h3>
+      <Button onClick={this.throwError}>Crash App</Button>
+      <Button onClick={this.handleBadRequest}>see 400 response</Button>
+    </div>
+  );
+
+  fetchCharacters = async (query: string) => {
+    this.startLoading();
     try {
       const data: CharactersResponse = await request(
-        'https://rickandmortyapi.com/graphql/',
+        this.linkURL,
         GET_CHARACTERS,
         { name: query, page: 1 }
       );
@@ -40,22 +74,21 @@ class Main extends Component<MainProps, MainState> {
         isSearched: true,
       });
     } catch (error: unknown) {
-      let message = 'Something went wrong.';
+      this.handleError(error);
+    }
+  };
 
-      if (error instanceof ClientError) {
-        const gqlErrors = error.response?.errors;
-        if (gqlErrors?.length) {
-          message = gqlErrors[0].message;
-        }
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-
+  fetchBadRequest = async () => {
+    this.startLoading();
+    try {
+      const data: CharactersResponse = await request(this.linkURL, CRASH_4XX);
       this.setState({
-        error: message,
+        characters: data.characters.results || [],
         isLoading: false,
         isSearched: true,
       });
+    } catch (error: unknown) {
+      this.handleError(error);
     }
   };
 
@@ -64,34 +97,8 @@ class Main extends Component<MainProps, MainState> {
     this.fetchCharacters(trimmedQuery);
   };
 
-  runBadRequest = async () => {
-    this.setState({ isLoading: true, error: null });
-    try {
-      const data: CharactersResponse = await request(
-        'https://rickandmortyapi.com/graphql/',
-        CRASH_4XX
-      );
-      this.setState({
-        characters: data.characters.results || [],
-        isLoading: false,
-        isSearched: true,
-      });
-    } catch (error: unknown) {
-      const message =
-        error instanceof ClientError
-          ? `Error code: ${error.response.status} - it is a Client Error, please check your request.`
-          : 'Something went wrong.';
-
-      this.setState({
-        error: message,
-        isLoading: false,
-        isSearched: true,
-      });
-    }
-  };
-
   handleBadRequest = () => {
-    this.runBadRequest();
+    this.fetchBadRequest();
   };
 
   throwError = () => {
@@ -106,10 +113,10 @@ class Main extends Component<MainProps, MainState> {
     const { characters, isLoading, error, isSearched } = this.state;
 
     return (
-      <div className=" bg-gray-100 p-6 space-y-6 border-2 border-blue-500 border-dashed rounded-lg m-4">
+      <div className="m-8 bg-gray-100 p-6 space-y-6 border-2 border-blue-500 border-dashed rounded-lg">
         <h1 className="mt-5 text-3xl font-bold text-center text-blue-700 tracking-widest uppercase">
-          Search for your favorite Rick and Morty characters and learn more
-          about them!
+          Search for your favorite Rick and Morty characters <br />
+          and learn more about them!
         </h1>
         <Search onSearch={this.handleSearch} />
         <div className="mx-auto w-[90%] h-[65vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
@@ -121,13 +128,7 @@ class Main extends Component<MainProps, MainState> {
           {error && <Fallback text={error} />}
           {isSearched && <CardList items={characters} />}
         </div>
-        <div className="flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4">
-          <h3 className="tracking-widest uppercase text-red-500 font-bold text-xl">
-            danger zone
-          </h3>
-          <Button onClick={this.throwError}>Crash App</Button>
-          <Button onClick={this.handleBadRequest}>see 400 response</Button>
-        </div>
+        {this.renderDangerZone()}
       </div>
     );
   }
