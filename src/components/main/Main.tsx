@@ -21,6 +21,11 @@ class Main extends Component<MainProps, MainState> {
     crash: false,
   };
 
+  componentDidMount() {
+    const savedQuery = localStorage.getItem('searchQuery') || '';
+    this.fetchCharacters(savedQuery);
+  }
+
   fetchCharacters = async (query: string) => {
     this.setState({ isLoading: true, error: null });
     try {
