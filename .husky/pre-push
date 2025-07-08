@@ -1,0 +1,8 @@
+mkdir -p .husky
+touch .husky/pre-push
+
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+echo 'INFO: Running tests before push...'
+npm run test || { echo "ERROR: Tests failed. Please fix before pushing."; exit 1; }
+echo 'INFO: Tests passed. Proceeding with push.'
