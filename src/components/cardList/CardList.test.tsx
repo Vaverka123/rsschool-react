@@ -45,7 +45,7 @@ describe('CardList Component', () => {
         name: '',
         status: '',
         species: '',
-        image: '',
+        image: null,
         location: { name: '' },
         origin: { name: '' },
       },
