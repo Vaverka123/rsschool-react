@@ -21,7 +21,7 @@ export type CharacterData = {
   name: string;
   status: string;
   species: string;
-  image: string;
+  image: string | null;
   location: { name: string };
   origin: { name: string };
 };

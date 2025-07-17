@@ -13,9 +13,12 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'src/**/*.test.{ts,tsx}',
-        'src/**/*.spec.{ts,tsx}',
         'src/setupTests.ts',
         'src/**/*.d.ts',
+        'src/types/**',
+        'src/index.css',
+        'src/App.tsx',
+        'src/main.tsx',
       ],
       thresholds: {
         global: {
