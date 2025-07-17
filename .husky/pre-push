@@ -1,6 +1,3 @@
-
-touch .husky/pre-push
-
 echo 'INFO: Running tests before push...'
 npm run test || { echo "ERROR: Tests failed. Please fix before pushing."; exit 1; }
 echo 'INFO: Tests passed. Proceeding with push.'
