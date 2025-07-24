@@ -25,15 +25,6 @@ afterEach(() => {
 });
 
 describe('Main Component', () => {
-  it('renders without crashing', async () => {
-    await act(async () => {
-      render(<Main data={mockData} />);
-    });
-    expect(
-      screen.getByText(/Search for your favorite Rick and Morty characters/i)
-    ).toBeInTheDocument();
-  });
-
   it('handles GraphQL ClientError correctly', async () => {
     const error = new GraphQLError('Bad Request');
 

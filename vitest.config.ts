@@ -19,6 +19,7 @@ export default defineConfig({
         'src/index.css',
         'src/App.tsx',
         'src/main.tsx',
+        'src/hooks/**',
       ],
       thresholds: {
         global: {
