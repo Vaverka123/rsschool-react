@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, FC } from 'react';
 import Search from '../search/Search';
-import Button from '../button/Button';
 import CardList from '../cardList/CardList';
 import { request, ClientError } from 'graphql-request';
 import {
@@ -8,11 +7,11 @@ import {
   type MainProps,
   type MainState,
 } from '../../types/types';
-import { CRASH_4XX, GET_CHARACTERS } from '../../graphql/queries/characters';
+import { GET_CHARACTERS } from '../../graphql/queries/characters';
 import LoadingBar from '../loadingBar/LoadingBar';
 import Fallback from '../fallback/Fallback';
 
-const Main: React.FC<MainProps> = () => {
+const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
     characters: [],
     error: null,
@@ -23,16 +22,11 @@ const Main: React.FC<MainProps> = () => {
 
   const linkURL = 'https://rickandmortyapi.com/graphql/';
 
-  useEffect(() => {
-    const savedQuery = localStorage.getItem('searchQuery') || '';
-    fetchCharacters(savedQuery);
+  const startLoading = useCallback(() => {
+    setState((prev) => ({ ...prev, isLoading: true, error: null }));
   }, []);
 
-  const startLoading = () => {
-    setState((prev) => ({ ...prev, isLoading: true, error: null }));
-  };
-
-  const handleError = (error: unknown) => {
+  const handleError = useCallback((error: unknown) => {
     let message = 'An unexpected error occurred.';
     if (error instanceof ClientError) {
       const gqlErrors = error.response?.errors;
@@ -49,62 +43,44 @@ const Main: React.FC<MainProps> = () => {
       isLoading: false,
       isSearched: true,
     }));
-  };
+  }, []);
 
-  const fetchCharacters = async (query: string) => {
-    startLoading();
-    try {
-      const data: CharactersResponse = await request(linkURL, GET_CHARACTERS, {
-        name: query,
-        page: 1,
-      });
-      setState((prev) => ({
-        ...prev,
-        characters: data.characters.results || [],
-        isLoading: false,
-        isSearched: true,
-      }));
-    } catch (error: unknown) {
-      handleError(error);
-    }
-  };
+  const fetchCharacters = useCallback(
+    async (query: string) => {
+      startLoading();
+      try {
+        const data: CharactersResponse = await request(
+          linkURL,
+          GET_CHARACTERS,
+          {
+            name: query,
+            page: 1,
+          }
+        );
+        setState((prev) => ({
+          ...prev,
+          characters: data.characters.results || [],
+          isLoading: false,
+          isSearched: true,
+        }));
+      } catch (error: unknown) {
+        handleError(error);
+      }
+    },
+    [linkURL, startLoading, handleError]
+  );
 
-  const fetchBadRequest = async () => {
-    startLoading();
-    try {
-      const data: CharactersResponse = await request(linkURL, CRASH_4XX);
-      setState((prev) => ({
-        ...prev,
-        characters: data.characters.results || [],
-        isLoading: false,
-        isSearched: true,
-      }));
-    } catch (error: unknown) {
-      handleError(error);
-    }
-  };
+  useEffect(() => {
+    const savedQuery = localStorage.getItem('searchQuery') || '';
+    fetchCharacters(savedQuery);
+  }, [fetchCharacters]);
 
-  const handleSearch = (query: string) => {
-    const trimmedQuery = query.trim();
-    fetchCharacters(trimmedQuery);
-  };
-
-  const handleBadRequest = () => {
-    fetchBadRequest();
-  };
-
-  const throwError = () => {
-    setState((prev) => ({ ...prev, crash: true }));
-  };
-
-  const renderDangerZone = () => (
-    <div className="flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4">
-      <h3 className="tracking-widest uppercase text-red-500 font-bold text-xl">
-        danger zone
-      </h3>
-      <Button onClick={throwError}>Crash App</Button>
-      <Button onClick={handleBadRequest}>see 400 response</Button>
-    </div>
+  const handleSearch = useCallback(
+    (query: string) => {
+      const trimmedQuery = query.trim();
+      fetchCharacters(trimmedQuery);
+    },
+    [fetchCharacters]
   );
 
   if (state.crash) {
@@ -129,7 +105,6 @@ const Main: React.FC<MainProps> = () => {
         {error && <Fallback text={error} />}
         {isSearched && <CardList items={characters} />}
       </div>
-      {renderDangerZone()}
     </div>
   );
 };
