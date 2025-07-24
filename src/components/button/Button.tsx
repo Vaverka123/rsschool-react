@@ -1,16 +1,18 @@
-import type { FC, ReactNode } from 'react';
+import { ButtonHTMLAttributes, FC, ReactNode } from 'react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-const Button: FC<ButtonProps> = ({ children, ...props }) => (
-  <button
-    className="h-fit bg-blue-600 hover:bg-blue-700 text-white font-semibold tracking-widest uppercase py-2 px-8 rounded shadow-md transition cursor-pointer"
-    {...props}
-  >
-    {children}
-  </button>
-);
+const Button: FC<ButtonProps> = ({ children, ...props }) => {
+  return (
+    <button
+      className="h-fit bg-blue-600 hover:bg-blue-700 text-white font-semibold tracking-widest uppercase py-2 px-8 rounded shadow-md transition cursor-pointer"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
 
 export default Button;
