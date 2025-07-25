@@ -4,6 +4,7 @@ import './index.css';
 import App from './App.tsx';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import About from './components/about/About.tsx';
+import PageNotFound from './components/pageNotFound/pageNotFound.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Failed to find the root element');
@@ -14,7 +15,7 @@ createRoot(rootElement).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/about" element={<About />} />
-        <Route path="/*" element={<div>Page not found</div>} />
+        <Route path="/*" element={<PageNotFound />} />
       </Routes>
     </StrictMode>
   </BrowserRouter>
