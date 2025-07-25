@@ -1,5 +1,8 @@
 import { FC } from 'react';
 import { Link } from 'react-router';
+import houseIcon from '/src/assets/house.svg';
+import githubIcon from '/src/assets/github.svg';
+import linkedinIcon from '/src/assets/linkedin.svg';
 
 const About: FC = () => {
   return (
@@ -8,7 +11,7 @@ const About: FC = () => {
         to="/"
         className="mb-4 flex items-center justify-end gap-2 hover:underline"
       >
-        <img className="size-6" src="/src/assets/house.svg" alt="home icon" />
+        <img className="size-6" src={houseIcon} alt="home icon" />
         Go back to home page
       </Link>
       <h2 className="text-2xl font-bold mb-4">About the Author</h2>
@@ -22,19 +25,15 @@ const About: FC = () => {
       <ul className="flex justify-center space-x-4 mb-4 gap-[20px]">
         <li>
           <a href="https://github.com/Vaverka123">
-            <img
-              className="size-16"
-              src="/src/assets/github.svg"
-              alt="github logo"
-            />
+            <img className="size-16" src={githubIcon} alt="github logo" />
           </a>
         </li>
         <li>
           <a href="https://www.linkedin.com/in/vera-maslava-589765124/">
             <img
               className="size-16"
-              src="/src/assets/linkedin.svg"
-              alt="link to author`s LinkedIn profile"
+              src={linkedinIcon}
+              alt="link to author's LinkedIn profile"
             />
           </a>
         </li>
