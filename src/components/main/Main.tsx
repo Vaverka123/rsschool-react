@@ -10,6 +10,7 @@ import {
 import { GET_CHARACTERS } from '../../graphql/queries/characters';
 import LoadingBar from '../loadingBar/LoadingBar';
 import Fallback from '../fallback/Fallback';
+import { Link, Outlet } from 'react-router';
 
 const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
@@ -90,22 +91,33 @@ const Main: FC<MainProps> = () => {
   const { characters, isLoading, error, isSearched } = state;
 
   return (
-    <div className="m-8 bg-gray-100 p-6 space-y-6 border-2 border-blue-500 border-dashed rounded-lg">
-      <h1 className="mt-5 text-3xl font-bold text-center text-blue-700 tracking-widest uppercase">
-        Search for your favorite Rick and Morty characters <br />
-        and learn more about them!
-      </h1>
-      <Search onSearch={handleSearch} />
-      <div className="mx-auto w-[90%] h-[65vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
-        {isLoading && (
-          <div>
-            <LoadingBar />
-          </div>
-        )}
-        {error && <Fallback text={error} />}
-        {isSearched && <CardList items={characters} />}
+    <>
+      <div className="m-8 bg-gray-100 p-6 space-y-6 border-2 border-blue-500 border-dashed rounded-lg">
+        <h1 className="mt-5 text-3xl font-bold text-center text-blue-700 tracking-widest uppercase">
+          Search for your favorite Rick and Morty characters <br />
+          and learn more about them!
+        </h1>
+        <Search onSearch={handleSearch} />
+        <div className="mx-auto w-[90%] h-[65vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
+          {isLoading && (
+            <div>
+              <LoadingBar />
+            </div>
+          )}
+          {error && <Fallback text={error} />}
+          {isSearched && <CardList items={characters} />}
+        </div>
       </div>
-    </div>
+      <div className="m-8 flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4 hover:bg-red-100 transition-colors duration-300 cursor-pointer">
+        <Link
+          to="/about"
+          className="tracking-widest uppercase text-red-500 font-bold text-xl"
+        >
+          about this app author
+        </Link>
+      </div>
+      <Outlet />
+    </>
   );
 };
 
