@@ -108,14 +108,14 @@ const Main: FC<MainProps> = () => {
           {isSearched && <CardList items={characters} />}
         </div>
       </div>
-      <div className="m-8 flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4 hover:bg-red-100 transition-colors duration-300 cursor-pointer">
+      <nav>
         <Link
           to="/about"
-          className="tracking-widest uppercase text-red-500 font-bold text-xl"
+          className="m-8 flex flex-col justify-center items-center border-2 border-red-500 border-dashed rounded-lg p-4 hover:bg-red-100 transition-colors duration-300 cursor-pointer tracking-widest uppercase text-red-500 font-bold text-xl"
         >
           about this app author
         </Link>
-      </div>
+      </nav>
       <Outlet />
     </>
   );

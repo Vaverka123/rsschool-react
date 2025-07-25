@@ -7,14 +7,16 @@ import linkedinIcon from '/src/assets/linkedin.svg';
 const About: FC = () => {
   return (
     <div className="m-20 p-6 border-2 border-gray-300 rounded-lg flex flex-col text-center">
-      <Link
-        to="/"
-        className="mb-4 flex items-center justify-end gap-2 hover:underline"
-      >
-        <img className="size-6" src={houseIcon} alt="home icon" />
-        Go back to home page
-      </Link>
-      <h2 className="text-2xl font-bold mb-4">About the Author</h2>
+      <nav>
+        <Link
+          to="/"
+          className="mb-4 flex items-center justify-end gap-2 hover:underline"
+        >
+          <img className="size-6" src={houseIcon} alt="home icon" />
+          Go back to home page
+        </Link>
+      </nav>
+      <h1 className="text-2xl font-bold mb-4">About the Author</h1>
       <p className="text-gray-700">
         This app was created by Vera Maslava,
         <br /> a passionate developer who loves working with React and GraphQL.
