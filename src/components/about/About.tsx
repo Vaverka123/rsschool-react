@@ -24,12 +24,22 @@ const About: FC = () => {
       </p>
       <ul className="flex justify-center space-x-4 mb-4 gap-[20px]">
         <li>
-          <a href="https://github.com/Vaverka123">
+          <a
+            href="https://github.com/Vaverka123"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit Vera Maslava's GitHub profile"
+          >
             <img className="size-16" src={githubIcon} alt="github logo" />
           </a>
         </li>
         <li>
-          <a href="https://www.linkedin.com/in/vera-maslava-589765124/">
+          <a
+            href="https://www.linkedin.com/in/vera-maslava-589765124/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit Vera Maslava's LinkedIn profile"
+          >
             <img
               className="size-16"
               src={linkedinIcon}
@@ -52,6 +62,8 @@ const About: FC = () => {
       </p>
       <a
         href="https://rs.school/courses/reactjs"
+        target="_blank"
+        rel="noopener noreferrer"
         className="text-blue-500 hover:underline mt-4"
       >
         learn more about RSSchool React Course
