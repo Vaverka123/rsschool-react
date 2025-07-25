@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 const About: FC = () => {
   return (
-    <div className="m-20 p-6 border-2 border-gray-300 rounded-lg flrex flex-col text-center">
+    <div className="m-20 p-6 border-2 border-gray-300 rounded-lg flex flex-col text-center">
       <Link
         to="/"
         className="mb-4 flex items-center justify-end gap-2 hover:underline"
@@ -21,22 +21,22 @@ const About: FC = () => {
       </p>
       <ul className="flex justify-center space-x-4 mb-4 gap-[20px]">
         <li>
-          <Link to="https://github.com/Vaverka123">
+          <a href="https://github.com/Vaverka123">
             <img
               className="size-16"
               src="/src/assets/github.svg"
               alt="github logo"
             />
-          </Link>
+          </a>
         </li>
         <li>
-          <Link to="https://www.linkedin.com/in/vera-maslava-589765124/">
+          <a href="https://www.linkedin.com/in/vera-maslava-589765124/">
             <img
               className="size-16"
               src="/src/assets/linkedin.svg"
               alt="link to author`s LinkedIn profile"
             />
-          </Link>
+          </a>
         </li>
       </ul>
       <p className="text-gray-700">
@@ -51,12 +51,12 @@ const About: FC = () => {
         students for a successful career in web development.
         <br />
       </p>
-      <Link
-        to="https://rs.school/courses/reactjs"
+      <a
+        href="https://rs.school/courses/reactjs"
         className="text-blue-500 hover:underline mt-4"
       >
         learn more about RSSchool React Course
-      </Link>
+      </a>
     </div>
   );
 };

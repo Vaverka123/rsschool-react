@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 
 const PageNotFound: FC = () => {
   return (
-    <div className="m-20 p-6 border-2 border-gray-300 rounded-lg flrex flex-col text-center">
+    <div className="m-20 p-6 border-2 border-gray-300 rounded-lg flex flex-col text-center">
       <Link
         to="/"
         className="mb-4 flex items-center justify-end gap-2 hover:underline"
