@@ -25,14 +25,3 @@ export const GET_CHARACTERS = gql`
     }
   }
 `;
-
-export const CRASH_4XX = gql`
-  query {
-    characters {
-      results {
-        id
-        nonExistingField
-      }
-    }
-  }
-`;

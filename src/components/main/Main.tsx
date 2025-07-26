@@ -11,15 +11,25 @@ import { GET_CHARACTERS } from '../../graphql/queries/characters';
 import LoadingBar from '../loadingBar/LoadingBar';
 import Fallback from '../fallback/Fallback';
 import { Link, Outlet } from 'react-router';
+import arrow from '../../assets/arrow-next.svg';
+import cross from '../../assets/cross.svg';
 
 const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
+    info: {
+      count: 0,
+      pages: 0,
+      next: null,
+      prev: null,
+    },
     characters: [],
     error: null,
     isLoading: false,
     isSearched: false,
     crash: false,
   });
+
+  const [currentPage, setCurrerntPage] = useState<number>(1);
 
   const linkURL = 'https://rickandmortyapi.com/graphql/';
 
@@ -46,6 +56,8 @@ const Main: FC<MainProps> = () => {
     }));
   }, []);
 
+  const { info, characters, isLoading, error, isSearched } = state;
+
   const fetchCharacters = useCallback(
     async (query: string) => {
       startLoading();
@@ -55,11 +67,12 @@ const Main: FC<MainProps> = () => {
           GET_CHARACTERS,
           {
             name: query,
-            page: 1,
+            page: currentPage,
           }
         );
         setState((prev) => ({
           ...prev,
+          info: data.characters.info,
           characters: data.characters.results || [],
           isLoading: false,
           isSearched: true,
@@ -68,7 +81,7 @@ const Main: FC<MainProps> = () => {
         handleError(error);
       }
     },
-    [linkURL, startLoading, handleError]
+    [linkURL, startLoading, handleError, currentPage]
   );
 
   useEffect(() => {
@@ -88,7 +101,15 @@ const Main: FC<MainProps> = () => {
     throw new Error('This is a test error!');
   }
 
-  const { characters, isLoading, error, isSearched } = state;
+  const handlePrevPress = () => {
+    setCurrerntPage((prev) => prev - 1);
+    fetchCharacters(localStorage.getItem('searchQuery') || '');
+  };
+
+  const handleNextPress = () => {
+    setCurrerntPage((prev) => prev + 1);
+    fetchCharacters(localStorage.getItem('searchQuery') || '');
+  };
 
   return (
     <>
@@ -107,6 +128,39 @@ const Main: FC<MainProps> = () => {
           {error && <Fallback text={error} />}
           {isSearched && <CardList items={characters} />}
         </div>
+        {(info.prev || info.next) && (
+          <div className="flex justify-center items-center mt-4 gap-4">
+            {info.prev == null ? (
+              <img
+                src={cross}
+                alt="prev page unavailable"
+                className="size-8 cursor-auto"
+              />
+            ) : (
+              <button onClick={handlePrevPress} className="cursor-pointer">
+                <img
+                  src={arrow}
+                  alt="arrow prev"
+                  className="rotate-180 size-8"
+                />
+              </button>
+            )}
+            <p>
+              Page {currentPage} of {info.pages}
+            </p>
+            {info.next == null ? (
+              <img
+                src={cross}
+                alt="next page unavailable"
+                className="size-8 cursor-auto"
+              />
+            ) : (
+              <button onClick={handleNextPress} className="cursor-pointer">
+                <img src={arrow} alt="arrow next" className="size-8" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
       <nav>
         <Link
