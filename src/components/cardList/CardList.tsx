@@ -3,7 +3,7 @@ import type { CardListProps } from '../../types/types';
 import CharacterCard from '../characterCard/CharacterCard';
 import Fallback from '../fallback/Fallback';
 
-const CardList: FC<CardListProps> = ({ items, setDetailsId, detailsId }) => {
+const CardList: FC<CardListProps> = ({ items }) => {
   if (items.length === 0) {
     return <Fallback text="No results found." />;
   }
@@ -20,10 +20,6 @@ const CardList: FC<CardListProps> = ({ items, setDetailsId, detailsId }) => {
           image={item.image}
           location={item.location}
           origin={item.origin}
-          action={() => {
-            setDetailsId(item.id);
-          }}
-          isActive={item.id === detailsId}
         />
       ))}
     </div>
