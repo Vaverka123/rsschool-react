@@ -1,145 +1,199 @@
-// import { render, screen, waitFor, act } from '@testing-library/react';
-// import { describe, it, expect, vi, afterEach, type Mock } from 'vitest';
-// import Main from './Main';
-// import { GraphQLError } from 'graphql';
-// import type { CharacterData } from '../../types/types';
-
-// const mockData = {
-//   loading: false,
-//   error: undefined,
-//   characters: undefined,
-// };
-
-// vi.mock('graphql-request', () => ({
-//   request: vi.fn(),
-//   ClientError: class ClientError extends Error {
-//     response: { errors?: GraphQLError[]; status: number } = {
-//       errors: [],
-//       status: 400,
-//     };
-//   },
-// }));
-
-// afterEach(() => {
-//   vi.clearAllMocks();
-// });
-
-// describe('Main Component', () => {
-//   it('handles GraphQL ClientError correctly', async () => {
-//     const error = new GraphQLError('Bad Request');
-
-//     const { request } = await import('graphql-request');
-//     (request as Mock).mockRejectedValueOnce({
-//       response: {
-//         errors: [error],
-//         status: 400,
-//       },
-//     });
-
-//     await act(async () => {
-//       render(<Main data={mockData} />);
-//     });
-//   });
-// });
-
-// vi.mock('../search/Search', () => ({
-//   default: (props: { onSearch: (query: string) => void }) => (
-//     <button onClick={() => props.onSearch('Rick')}>Mock Search</button>
-//   ),
-// }));
-// vi.mock('../button/Button', () => ({
-//   default: (props: { onClick: () => void; children: React.ReactNode }) => (
-//     <button onClick={props.onClick}>{props.children}</button>
-//   ),
-// }));
-// vi.mock('../cardList/CardList', () => ({
-//   default: (props: { items: CharacterData[] }) => (
-//     <div>
-//       CardList:{' '}
-//       {props.items && props.items.length > 0
-//         ? props.items.map((item) => (
-//             <span key={item.id} data-testid="character-name">
-//               {item.name}
-//             </span>
-//           ))
-//         : 'No items'}
-//     </div>
-//   ),
-// }));
-// vi.mock('../loadingBar/LoadingBar', () => ({
-//   default: () => <div>Loading...</div>,
-// }));
-// vi.mock('../fallback/Fallback', () => ({
-//   default: (props: { text: string }) => <div>{props.text}</div>,
-// }));
-
-// const mockCharacters = [
-//   { id: '1', name: 'Rick Sanchez' },
-//   { id: '2', name: 'Morty Smith' },
-// ];
-
-// vi.mock('graphql-request', () => ({
-//   request: vi.fn(),
-//   ClientError: class extends Error {},
-// }));
-
-// afterEach(() => {
-//   vi.clearAllMocks();
-//   localStorage.clear();
-// });
-
-// describe('Main Component', () => {
-//   it('renders character list on successful API response', async () => {
-//     const { request } = await import('graphql-request');
-//     (request as Mock).mockResolvedValueOnce({
-//       characters: {
-//         results: mockCharacters,
-//       },
-//     });
-
-//     localStorage.setItem('searchQuery', 'Rick');
-
-//     await act(async () => {
-//       render(<Main data={{ loading: false, characters: undefined }} />);
-//     });
-
-//     await waitFor(() => {
-//       expect(screen.getByText(/CardList/)).toBeInTheDocument();
-//       expect(screen.getAllByTestId('character-name').length).toBe(2);
-//       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
-//       expect(screen.getByText('Morty Smith')).toBeInTheDocument();
-//     });
-//   });
-// });
-
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import { BrowserRouter } from 'react-router';
 import Main from './Main';
-import { MemoryRouter } from 'react-router';
+import type { CharactersResponse, CharacterData } from '../../types/types';
 
-// Mock GraphQL request
-vi.mock('graphql-request', () => ({
-  request: vi.fn().mockResolvedValue({
-    characters: { results: [] },
-  }),
+vi.mock('../search/Search', () => ({
+  default: (props: { onSearch: (query: string) => void }) => (
+    <div data-testid="search-component">
+      <button onClick={() => props.onSearch('test')}>Search</button>
+    </div>
+  ),
 }));
 
-describe('Main', () => {
-  it('renders the heading and search input', () => {
-    render(
-      <MemoryRouter>
-        <Main
-          data={{ loading: false, error: undefined, characters: undefined }}
-        />
-      </MemoryRouter>
-    );
+vi.mock('../cardList/CardList', () => ({
+  default: (props: {
+    items: CharacterData[];
+    setDetailsId: (id: string | null) => void;
+    detailsId: string | null;
+  }) => (
+    <div data-testid="card-list">
+      {props.items.length > 0 ? (
+        props.items.map((item) => (
+          <div key={item.id} data-testid="character-card">
+            {item.name}
+          </div>
+        ))
+      ) : (
+        <div data-testid="no-characters">No characters</div>
+      )}
+    </div>
+  ),
+}));
 
-    // Check for heading
+vi.mock('../loadingBar/LoadingBar', () => ({
+  default: () => <div data-testid="loading-bar">Loading...</div>,
+}));
+
+vi.mock('../fallback/Fallback', () => ({
+  default: (props: { text: string }) => (
+    <div data-testid="fallback">{props.text}</div>
+  ),
+}));
+
+vi.mock('../detailsCard/DetailsCard', () => ({
+  default: (props: { id: string; cancel: () => void }) => (
+    <div data-testid="details-card">
+      Details for {props.id}
+      <button onClick={props.cancel}>Close</button>
+    </div>
+  ),
+}));
+
+vi.mock('../../graphql/queries/characters', () => ({
+  GET_CHARACTERS: 'mock-query',
+}));
+
+vi.mock('graphql-request', () => {
+  const mockRequest = vi.fn();
+  return { request: mockRequest };
+});
+
+const { request: mockRequest } = await import('graphql-request');
+
+const mockLocalStorage = {
+  getItem: vi.fn().mockReturnValue(''),
+  setItem: vi.fn(),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: mockLocalStorage,
+});
+
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(<BrowserRouter>{component}</BrowserRouter>);
+};
+
+describe('Main Component', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders main heading', async () => {
+    (mockRequest as Mock).mockResolvedValue({
+      characters: {
+        results: [],
+        info: { count: 0, pages: 0, next: null, prev: null },
+      },
+    });
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
     expect(
-      screen.getByText(/search for your favorite rick and morty characters/i)
+      screen.getByText(/Search for your favorite Rick and Morty characters/)
     ).toBeInTheDocument();
+  });
 
-    // Check for search input (from Search component)
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  it('renders search component', async () => {
+    (mockRequest as Mock).mockResolvedValue({
+      characters: {
+        results: [],
+        info: { count: 0, pages: 0, next: null, prev: null },
+      },
+    });
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
+    expect(screen.getByTestId('search-component')).toBeInTheDocument();
+  });
+
+  it('shows loading bar during API call', async () => {
+    (mockRequest as Mock).mockImplementation(() => new Promise(() => {}));
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
+    expect(screen.getByTestId('loading-bar')).toBeInTheDocument();
+  });
+
+  it('renders about link', async () => {
+    (mockRequest as Mock).mockResolvedValue({
+      characters: {
+        results: [],
+        info: { count: 0, pages: 0, next: null, prev: null },
+      },
+    });
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
+    const aboutLink = screen.getByRole('link', {
+      name: /about this app author/i,
+    });
+    expect(aboutLink).toBeInTheDocument();
+    expect(aboutLink).toHaveAttribute('href', '/about');
+  });
+
+  it('displays characters when API returns data', async () => {
+    const mockData: CharactersResponse = {
+      characters: {
+        results: [
+          {
+            id: '1',
+            name: 'Rick Sanchez',
+            status: 'Alive',
+            species: 'Human',
+            image: 'rick.jpg',
+            location: { name: 'Earth' },
+            origin: { name: 'Earth' },
+            action: () => {},
+          },
+        ],
+        info: { count: 1, pages: 1, next: null, prev: null },
+      },
+    };
+
+    (mockRequest as Mock).mockResolvedValue(mockData);
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('card-list')).toBeInTheDocument();
+      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
+    });
+  });
+
+  it('handles search correctly', async () => {
+    (mockRequest as Mock).mockResolvedValue({
+      characters: {
+        results: [],
+        info: { count: 0, pages: 0, next: null, prev: null },
+      },
+    });
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
+    const searchButton = screen.getByText('Search');
+    await userEvent.click(searchButton);
+
+    expect(mockRequest).toHaveBeenCalledWith(
+      'https://rickandmortyapi.com/graphql/',
+      'mock-query',
+      { name: 'test', page: 1 }
+    );
+  });
+
+  it('shows pagination controls', async () => {
+    (mockRequest as Mock).mockResolvedValue({
+      characters: {
+        results: [],
+        info: { count: 0, pages: 2, next: 'next-url', prev: null },
+      },
+    });
+
+    renderWithRouter(<Main data={{ loading: false }} />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Page 1 of 2')).toBeInTheDocument();
+    });
   });
 });

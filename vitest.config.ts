@@ -20,6 +20,7 @@ export default defineConfig({
         'src/App.tsx',
         'src/main.tsx',
         'src/hooks/**',
+        'src/graphql/**',
       ],
       thresholds: {
         global: {

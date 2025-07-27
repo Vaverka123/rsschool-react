@@ -26,6 +26,8 @@ export type CharacterData = {
   image: string | null;
   location: { name: string };
   origin: { name: string };
+  action: () => void;
+  isActive?: boolean;
 };
 
 export type CharactersResponse = {
@@ -37,6 +39,8 @@ export type CharactersResponse = {
 
 export type CardListProps = {
   items: CharacterData[];
+  setDetailsId: (id: string) => void;
+  detailsId?: string | null;
 };
 
 export type InfoData = {
@@ -44,4 +48,31 @@ export type InfoData = {
   pages: number;
   next: number | null;
   prev: number | null;
+};
+
+export type CharacterByIDResponse = {
+  character: CharacterByIDData;
+};
+
+export type CharacterByIDData = {
+  id: string;
+  name: string;
+  status: string;
+  species: string;
+  type: string;
+  gender: string;
+  origin: {
+    name: string;
+  };
+  location: {
+    name: string;
+  };
+  image: string;
+  created: string;
+  cancel?: () => void;
+};
+
+export type DetailsCardProps = {
+  id: string | null;
+  cancel: () => void;
 };
