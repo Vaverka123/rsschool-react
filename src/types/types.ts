@@ -2,6 +2,7 @@ export interface MainProps {
   data: {
     loading: boolean;
     error?: Error;
+
     characters?: {
       results: CharacterData[];
     };
@@ -9,6 +10,7 @@ export interface MainProps {
 }
 
 export interface MainState {
+  info: InfoData;
   characters: CharacterData[];
   error: string | null;
   isLoading: boolean;
@@ -28,10 +30,18 @@ export type CharacterData = {
 
 export type CharactersResponse = {
   characters: {
+    info: InfoData;
     results: CharacterData[];
   };
 };
 
 export type CardListProps = {
   items: CharacterData[];
+};
+
+export type InfoData = {
+  count: number;
+  pages: number;
+  next: number | null;
+  prev: number | null;
 };

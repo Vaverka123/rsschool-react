@@ -10,7 +10,6 @@ const Search = ({ onSearch }: SearchProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { value, setValue, saveQuery } = useSearchQuery();
 
-  // Sync the hook's value with the input field
   useEffect(() => {
     if (inputRef.current && value) {
       inputRef.current.value = value;

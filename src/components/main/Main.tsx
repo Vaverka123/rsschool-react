@@ -10,16 +10,28 @@ import {
 import { GET_CHARACTERS } from '../../graphql/queries/characters';
 import LoadingBar from '../loadingBar/LoadingBar';
 import Fallback from '../fallback/Fallback';
-import { Link, Outlet } from 'react-router';
+import { Link, Outlet, useSearchParams } from 'react-router';
+import arrow from '../../assets/arrow-next.svg';
+import cross from '../../assets/cross.svg';
 
 const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
+    info: {
+      count: 0,
+      pages: 0,
+      next: null,
+      prev: null,
+    },
     characters: [],
     error: null,
     isLoading: false,
     isSearched: false,
     crash: false,
   });
+
+  const [params, setParams] = useSearchParams({ page: '1' });
+
+  const currentPage = Number(params.get('page')) || 1;
 
   const linkURL = 'https://rickandmortyapi.com/graphql/';
 
@@ -46,6 +58,8 @@ const Main: FC<MainProps> = () => {
     }));
   }, []);
 
+  const { info, characters, isLoading, error, isSearched } = state;
+
   const fetchCharacters = useCallback(
     async (query: string) => {
       startLoading();
@@ -55,11 +69,12 @@ const Main: FC<MainProps> = () => {
           GET_CHARACTERS,
           {
             name: query,
-            page: 1,
+            page: Number(params.get('page')),
           }
         );
         setState((prev) => ({
           ...prev,
+          info: data.characters.info,
           characters: data.characters.results || [],
           isLoading: false,
           isSearched: true,
@@ -68,7 +83,7 @@ const Main: FC<MainProps> = () => {
         handleError(error);
       }
     },
-    [linkURL, startLoading, handleError]
+    [linkURL, startLoading, handleError, params]
   );
 
   useEffect(() => {
@@ -88,7 +103,19 @@ const Main: FC<MainProps> = () => {
     throw new Error('This is a test error!');
   }
 
-  const { characters, isLoading, error, isSearched } = state;
+  const handlePrevPress = () => {
+    setParams({
+      page: String(currentPage - 1),
+    });
+    fetchCharacters(localStorage.getItem('searchQuery') || '');
+  };
+
+  const handleNextPress = () => {
+    setParams({
+      page: String(currentPage + 1),
+    });
+    fetchCharacters(localStorage.getItem('searchQuery') || '');
+  };
 
   return (
     <>
@@ -107,15 +134,48 @@ const Main: FC<MainProps> = () => {
           {error && <Fallback text={error} />}
           {isSearched && <CardList items={characters} />}
         </div>
+        {(info.prev || info.next) && (
+          <div className="flex justify-center items-center mt-4 gap-4">
+            {info.prev == null ? (
+              <img
+                src={cross}
+                alt="prev page unavailable"
+                className="size-8 cursor-auto"
+              />
+            ) : (
+              <button onClick={handlePrevPress} className="cursor-pointer">
+                <img
+                  src={arrow}
+                  alt="arrow prev"
+                  className="rotate-180 size-8"
+                />
+              </button>
+            )}
+            <p>
+              Page {currentPage} of {info.pages}
+            </p>
+            {info.next == null ? (
+              <img
+                src={cross}
+                alt="next page unavailable"
+                className="size-8 cursor-auto"
+              />
+            ) : (
+              <button onClick={handleNextPress} className="cursor-pointer">
+                <img src={arrow} alt="arrow next" className="size-8" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
-      <div className="m-8 flex flex-col justify-center items-center space-y-4 border-2 border-red-500 border-dashed rounded-lg p-4 hover:bg-red-100 transition-colors duration-300 cursor-pointer">
+      <nav>
         <Link
           to="/about"
-          className="tracking-widest uppercase text-red-500 font-bold text-xl"
+          className="m-8 flex flex-col justify-center items-center border-2 border-red-500 border-dashed rounded-lg p-4 hover:bg-red-100 transition-colors duration-300 cursor-pointer tracking-widest uppercase text-red-500 font-bold text-xl"
         >
           about this app author
         </Link>
-      </div>
+      </nav>
       <Outlet />
     </>
   );
