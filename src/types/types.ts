@@ -63,11 +63,9 @@ export type CharacterByIDData = {
   gender: string;
   origin: {
     name: string;
-    url: string;
   };
   location: {
     name: string;
-    url: string;
   };
   image: string;
   created: string;

@@ -44,7 +44,7 @@ const DetailsCard: FC<DetailsCardProps> = ({ id, cancel }) => {
             className="bg-red-300 p-6 m-8 w-fit rounded-md text-black font-semibold hover:bg-red-400 transition-colors duration-300 cursor-pointer"
             onClick={cancel}
           >
-            X close details X
+            X close details view X
           </button>
           <div className="flex justify-center">
             <img
