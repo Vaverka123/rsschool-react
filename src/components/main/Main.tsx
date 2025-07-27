@@ -13,6 +13,7 @@ import Fallback from '../fallback/Fallback';
 import { Link, Outlet, useSearchParams } from 'react-router';
 import arrow from '../../assets/arrow-next.svg';
 import cross from '../../assets/cross.svg';
+import DetailsCard from '../detailsCard/DetailsCard';
 
 const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
@@ -99,10 +100,6 @@ const Main: FC<MainProps> = () => {
     [fetchCharacters]
   );
 
-  if (state.crash) {
-    throw new Error('This is a test error!');
-  }
-
   const handlePrevPress = () => {
     setParams({
       page: String(currentPage - 1),
@@ -116,6 +113,11 @@ const Main: FC<MainProps> = () => {
     });
     fetchCharacters(localStorage.getItem('searchQuery') || '');
   };
+
+  const [detailsId, setDetailsId] = useState<string | null>(null);
+  const cancel = () => setDetailsId(null);
+
+  console.log('Current page:', detailsId);
 
   return (
     <>
@@ -132,7 +134,22 @@ const Main: FC<MainProps> = () => {
             </div>
           )}
           {error && <Fallback text={error} />}
-          {isSearched && <CardList items={characters} />}
+          {isSearched && (
+            <div className="parent opened flex">
+              <div style={{ width: `${detailsId ? '50%' : '100%'}` }}>
+                <CardList
+                  items={characters}
+                  setDetailsId={setDetailsId}
+                  detailsId={detailsId}
+                />
+              </div>
+              {detailsId && (
+                <div style={{ width: '50%' }}>
+                  <DetailsCard id={detailsId} cancel={cancel} />
+                </div>
+              )}
+            </div>
+          )}
         </div>
         {(info.prev || info.next) && (
           <div className="flex justify-center items-center mt-4 gap-4">
@@ -180,5 +197,4 @@ const Main: FC<MainProps> = () => {
     </>
   );
 };
-
 export default Main;
