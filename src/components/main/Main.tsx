@@ -10,7 +10,7 @@ import {
 import { GET_CHARACTERS } from '../../graphql/queries/characters';
 import LoadingBar from '../loadingBar/LoadingBar';
 import Fallback from '../fallback/Fallback';
-import { Link, Outlet } from 'react-router';
+import { Link, Outlet, useSearchParams } from 'react-router';
 import arrow from '../../assets/arrow-next.svg';
 import cross from '../../assets/cross.svg';
 
@@ -29,7 +29,9 @@ const Main: FC<MainProps> = () => {
     crash: false,
   });
 
-  const [currentPage, setCurrerntPage] = useState<number>(1);
+  const [params, setParams] = useSearchParams({ page: '1' });
+
+  const currentPage = Number(params.get('page')) || 1;
 
   const linkURL = 'https://rickandmortyapi.com/graphql/';
 
@@ -67,7 +69,7 @@ const Main: FC<MainProps> = () => {
           GET_CHARACTERS,
           {
             name: query,
-            page: currentPage,
+            page: Number(params.get('page')),
           }
         );
         setState((prev) => ({
@@ -81,7 +83,7 @@ const Main: FC<MainProps> = () => {
         handleError(error);
       }
     },
-    [linkURL, startLoading, handleError, currentPage]
+    [linkURL, startLoading, handleError, params]
   );
 
   useEffect(() => {
@@ -102,12 +104,16 @@ const Main: FC<MainProps> = () => {
   }
 
   const handlePrevPress = () => {
-    setCurrerntPage((prev) => prev - 1);
+    setParams({
+      page: String(currentPage - 1),
+    });
     fetchCharacters(localStorage.getItem('searchQuery') || '');
   };
 
   const handleNextPress = () => {
-    setCurrerntPage((prev) => prev + 1);
+    setParams({
+      page: String(currentPage + 1),
+    });
     fetchCharacters(localStorage.getItem('searchQuery') || '');
   };
 
