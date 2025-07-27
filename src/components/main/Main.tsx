@@ -31,10 +31,17 @@ const Main: FC<MainProps> = () => {
   });
 
   const [params, setParams] = useSearchParams({ page: '1' });
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
   const currentPage = Number(params.get('page')) || 1;
-
   const linkURL = 'https://rickandmortyapi.com/graphql/';
+
+  useEffect(() => {
+    const characterId = params.get('character');
+    if (characterId) {
+      setDetailsId(characterId);
+    }
+  }, [params]);
 
   const startLoading = useCallback(() => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
@@ -95,29 +102,51 @@ const Main: FC<MainProps> = () => {
   const handleSearch = useCallback(
     (query: string) => {
       const trimmedQuery = query.trim();
+
+      const newParams = new URLSearchParams();
+      newParams.set('page', '1');
+      setParams(newParams);
+      setDetailsId(null);
       fetchCharacters(trimmedQuery);
     },
-    [fetchCharacters]
+    [fetchCharacters, setParams]
   );
 
+  const setDetailsIdWithParams = useCallback(
+    (id: string | null) => {
+      setDetailsId(id);
+
+      const newParams = new URLSearchParams(params);
+      if (id) {
+        newParams.set('character', id);
+      } else {
+        newParams.delete('character');
+      }
+      setParams(newParams);
+    },
+    [params, setParams]
+  );
+
+  const cancel = useCallback(() => {
+    setDetailsId(null);
+    const newParams = new URLSearchParams(params);
+    newParams.delete('character');
+    setParams(newParams);
+  }, [params, setParams]);
+
   const handlePrevPress = () => {
-    setParams({
-      page: String(currentPage - 1),
-    });
+    const newParams = new URLSearchParams(params);
+    newParams.set('page', String(currentPage - 1));
+    setParams(newParams);
     fetchCharacters(localStorage.getItem('searchQuery') || '');
   };
 
   const handleNextPress = () => {
-    setParams({
-      page: String(currentPage + 1),
-    });
+    const newParams = new URLSearchParams(params);
+    newParams.set('page', String(currentPage + 1));
+    setParams(newParams);
     fetchCharacters(localStorage.getItem('searchQuery') || '');
   };
-
-  const [detailsId, setDetailsId] = useState<string | null>(null);
-  const cancel = () => setDetailsId(null);
-
-  console.log('Current page:', detailsId);
 
   return (
     <>
@@ -139,7 +168,7 @@ const Main: FC<MainProps> = () => {
               <div style={{ width: `${detailsId ? '50%' : '100%'}` }}>
                 <CardList
                   items={characters}
-                  setDetailsId={setDetailsId}
+                  setDetailsId={setDetailsIdWithParams}
                   detailsId={detailsId}
                 />
               </div>
@@ -151,39 +180,34 @@ const Main: FC<MainProps> = () => {
             </div>
           )}
         </div>
-        {(info.prev || info.next) && (
-          <div className="flex justify-center items-center mt-4 gap-4">
-            {info.prev == null ? (
-              <img
-                src={cross}
-                alt="prev page unavailable"
-                className="size-8 cursor-auto"
-              />
-            ) : (
-              <button onClick={handlePrevPress} className="cursor-pointer">
-                <img
-                  src={arrow}
-                  alt="arrow prev"
-                  className="rotate-180 size-8"
-                />
-              </button>
-            )}
-            <p>
-              Page {currentPage} of {info.pages}
-            </p>
-            {info.next == null ? (
-              <img
-                src={cross}
-                alt="next page unavailable"
-                className="size-8 cursor-auto"
-              />
-            ) : (
-              <button onClick={handleNextPress} className="cursor-pointer">
-                <img src={arrow} alt="arrow next" className="size-8" />
-              </button>
-            )}
-          </div>
-        )}
+
+        <div className="flex justify-center items-center mt-4 gap-4">
+          {info.prev == null ? (
+            <img
+              src={cross}
+              alt="prev page unavailable"
+              className="size-8 cursor-auto"
+            />
+          ) : (
+            <button onClick={handlePrevPress} className="cursor-pointer">
+              <img src={arrow} alt="arrow prev" className="rotate-180 size-8" />
+            </button>
+          )}
+          <p>
+            Page {currentPage} of {info.pages}
+          </p>
+          {info.next == null ? (
+            <img
+              src={cross}
+              alt="next page unavailable"
+              className="size-8 cursor-auto"
+            />
+          ) : (
+            <button onClick={handleNextPress} className="cursor-pointer">
+              <img src={arrow} alt="arrow next" className="size-8" />
+            </button>
+          )}
+        </div>
       </div>
       <nav>
         <Link
@@ -197,4 +221,5 @@ const Main: FC<MainProps> = () => {
     </>
   );
 };
+
 export default Main;
