@@ -14,6 +14,7 @@ import { Link, Outlet, useSearchParams } from 'react-router';
 import arrow from '../../assets/arrow-next.svg';
 import cross from '../../assets/cross.svg';
 import DetailsCard from '../detailsCard/DetailsCard';
+import { useSearchQuery } from '../../hooks/useSearchQuery';
 
 const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
@@ -32,6 +33,9 @@ const Main: FC<MainProps> = () => {
 
   const [params, setParams] = useSearchParams({ page: '1' });
   const [detailsId, setDetailsId] = useState<string | null>(null);
+  const { setValue, getSavedQuery } = useSearchQuery({
+    key: 'searchQuery',
+  });
 
   const currentPage = Number(params.get('page')) || 1;
   const linkURL = 'https://rickandmortyapi.com/graphql/';
@@ -95,22 +99,9 @@ const Main: FC<MainProps> = () => {
   );
 
   useEffect(() => {
-    const savedQuery = localStorage.getItem('searchQuery') || '';
+    const savedQuery = getSavedQuery() || '';
     fetchCharacters(savedQuery);
   }, [fetchCharacters]);
-
-  const handleSearch = useCallback(
-    (query: string) => {
-      const trimmedQuery = query.trim();
-
-      const newParams = new URLSearchParams();
-      newParams.set('page', '1');
-      setParams(newParams);
-      setDetailsId(null);
-      fetchCharacters(trimmedQuery);
-    },
-    [fetchCharacters, setParams]
-  );
 
   const setDetailsIdWithParams = useCallback(
     (id: string | null) => {
@@ -155,7 +146,7 @@ const Main: FC<MainProps> = () => {
           Search for your favorite Rick and Morty characters <br />
           and learn more about them!
         </h1>
-        <Search onSearch={handleSearch} />
+        <Search onSearch={setValue} />
         <div className="mx-auto w-[90%] h-[65vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
           {isLoading && (
             <div>
