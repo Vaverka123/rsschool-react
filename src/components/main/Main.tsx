@@ -15,6 +15,7 @@ import arrow from '../../assets/arrow-next.svg';
 import cross from '../../assets/cross.svg';
 import DetailsCard from '../detailsCard/DetailsCard';
 import { useSearchQuery } from '../../hooks/useSearchQuery';
+import SelectedCardsMenu from '../selectedCardsMenu/SelectedCardsMenu';
 
 const Main: FC<MainProps> = () => {
   const [state, setState] = useState<MainState>({
@@ -36,6 +37,9 @@ const Main: FC<MainProps> = () => {
   const { setValue, getSavedQuery } = useSearchQuery({
     key: 'searchQuery',
   });
+  const [selectedCharacters, setSelectedCharacters] = useState<Set<string>>(
+    new Set()
+  );
 
   const currentPage = Number(params.get('page')) || 1;
   const linkURL = 'https://rickandmortyapi.com/graphql/';
@@ -103,6 +107,32 @@ const Main: FC<MainProps> = () => {
     fetchCharacters(savedQuery);
   }, [fetchCharacters]);
 
+  const toggleCharacterSelection = useCallback((characterId: string) => {
+    setSelectedCharacters((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(characterId)) {
+        newSet.delete(characterId);
+      } else {
+        newSet.add(characterId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const handleSearch = useCallback(
+    (query: string) => {
+      const trimmedQuery = query.trim();
+      setValue(trimmedQuery);
+      const newParams = new URLSearchParams();
+      newParams.set('page', '1');
+      setParams(newParams);
+      setDetailsId(null);
+      setSelectedCharacters(new Set());
+      fetchCharacters(trimmedQuery);
+    },
+    [setValue, setParams, fetchCharacters]
+  );
+
   const setDetailsIdWithParams = useCallback(
     (id: string | null) => {
       setDetailsId(id);
@@ -146,7 +176,7 @@ const Main: FC<MainProps> = () => {
           Search for your favorite Rick and Morty characters <br />
           and learn more about them!
         </h1>
-        <Search onSearch={setValue} />
+        <Search onSearch={handleSearch} />
         <div className="mx-auto w-[90%] h-[65vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
           {isLoading && (
             <div>
@@ -161,6 +191,8 @@ const Main: FC<MainProps> = () => {
                   items={characters}
                   setDetailsId={setDetailsIdWithParams}
                   detailsId={detailsId}
+                  selectedCharacters={selectedCharacters}
+                  onToggleSelection={toggleCharacterSelection}
                 />
               </div>
               {detailsId && (
@@ -169,6 +201,13 @@ const Main: FC<MainProps> = () => {
                 </div>
               )}
             </div>
+          )}
+          {selectedCharacters.size > 0 && (
+            <SelectedCardsMenu
+              selected={selectedCharacters.size}
+              removeAll={() => setSelectedCharacters(new Set())}
+              download={() => console.log('Download')}
+            />
           )}
         </div>
 

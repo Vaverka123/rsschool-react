@@ -3,7 +3,13 @@ import type { CardListProps } from '../../types/types';
 import CharacterCard from '../characterCard/CharacterCard';
 import Fallback from '../fallback/Fallback';
 
-const CardList: FC<CardListProps> = ({ items, setDetailsId, detailsId }) => {
+const CardList: FC<CardListProps> = ({
+  items,
+  setDetailsId,
+  detailsId,
+  selectedCharacters,
+  onToggleSelection,
+}) => {
   if (items.length === 0) {
     return <Fallback text="No results found." />;
   }
@@ -24,6 +30,8 @@ const CardList: FC<CardListProps> = ({ items, setDetailsId, detailsId }) => {
             setDetailsId(item.id);
           }}
           isActive={item.id === detailsId}
+          isSelected={selectedCharacters?.has(item.id) || false}
+          onToggleSelection={() => onToggleSelection?.(item.id)}
         />
       ))}
     </div>

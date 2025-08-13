@@ -28,6 +28,8 @@ export type CharacterData = {
   origin: { name: string };
   action: () => void;
   isActive?: boolean;
+  isSelected?: boolean;
+  onToggleSelection?: () => void;
 };
 
 export type CharactersResponse = {
@@ -41,6 +43,8 @@ export type CardListProps = {
   items: CharacterData[];
   setDetailsId: (id: string) => void;
   detailsId?: string | null;
+  selectedCharacters?: Set<string>;
+  onToggleSelection?: (id: string) => void;
 };
 
 export type InfoData = {

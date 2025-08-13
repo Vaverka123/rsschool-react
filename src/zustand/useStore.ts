@@ -2,6 +2,9 @@ import { create } from 'zustand';
 
 interface StoreState {
   selectedItems: number;
+  increaseSelectedItems: () => void;
+  removeAllSelectedItems: () => void;
+  updateSelectedItems: (newSelectedItems: number) => void;
 }
 
 const useStore = create<StoreState>((set) => ({
