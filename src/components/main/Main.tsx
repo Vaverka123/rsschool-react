@@ -169,6 +169,62 @@ const Main: FC<MainProps> = () => {
     fetchCharacters(localStorage.getItem('searchQuery') || '');
   };
 
+  const handleDownloadSelectedCharacters = () => {
+    const charactersToDownload = Array.from(selectedCharacters);
+
+    if (charactersToDownload.length === 0) {
+      return;
+    }
+
+    const selectedCharacterData = characters.filter((character) =>
+      charactersToDownload.includes(character.id)
+    );
+
+    const csvHeaders = [
+      'ID',
+      'Name',
+      'Status',
+      'Species',
+      'Origin',
+      'Location',
+      'Image URL',
+      'Details URL',
+    ];
+
+    const csvRows = selectedCharacterData.map((character) => [
+      character.id,
+      `"${character.name}"`,
+      character.status,
+      character.species,
+      `"${character.origin?.name || 'Unknown'}"`,
+      `"${character.location?.name || 'Unknown'}"`,
+      character.image,
+      `"https://rickandmortyapi.com/character/${character.id}"`,
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map((row) => row.join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute(
+        'download',
+        `${charactersToDownload.length}_characters.csv`
+      );
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <>
       <div className="m-8 bg-gray-100 p-6 space-y-6 border-2 border-blue-500 border-dashed rounded-lg">
@@ -206,7 +262,7 @@ const Main: FC<MainProps> = () => {
             <SelectedCardsMenu
               selected={selectedCharacters.size}
               removeAll={() => setSelectedCharacters(new Set())}
-              download={() => console.log('Download')}
+              download={() => handleDownloadSelectedCharacters()}
             />
           )}
         </div>
