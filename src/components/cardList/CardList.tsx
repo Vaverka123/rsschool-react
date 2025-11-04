@@ -15,7 +15,7 @@ const CardList: FC<CardListProps> = ({
   }
 
   return (
-    <div className="flex flex-wrap gap-6 p-6 justify-center items-center">
+    <div className="flex flex-wrap gap-4 p-2 justify-center items-center">
       {items?.map((item) => (
         <CharacterCard
           key={item.id}

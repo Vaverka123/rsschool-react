@@ -11,3 +11,8 @@
 .animate-sweep {
   animation: sweep 1s ease-in-out infinite;
 }
+
+body {
+  height: 100%;
+  overflow: hidden;
+}
