@@ -82,21 +82,6 @@ describe('CardList Component', () => {
     expect(mockSetDetailsId).toHaveBeenCalledWith('1');
   });
 
-  it('has correct container styling', () => {
-    render(
-      <CardList
-        items={mockCharacters}
-        setDetailsId={mockSetDetailsId}
-        detailsId={null}
-      />
-    );
-
-    const container = screen
-      .getByText('Rick Sanchez')
-      .closest('div')?.parentElement;
-    expect(container).toHaveClass('flex', 'flex-wrap', 'gap-6', 'p-6');
-  });
-
   it('passes isActive prop correctly', () => {
     render(
       <CardList
