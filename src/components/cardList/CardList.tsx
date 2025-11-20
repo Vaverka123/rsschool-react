@@ -15,25 +15,27 @@ const CardList: FC<CardListProps> = ({
   }
 
   return (
-    <div className="flex flex-wrap gap-4 p-2 justify-center items-center">
-      {items?.map((item) => (
-        <CharacterCard
-          key={item.id}
-          id={item.id}
-          name={item.name}
-          status={item.status}
-          species={item.species}
-          image={item.image}
-          location={item.location}
-          origin={item.origin}
-          action={() => {
-            setDetailsId(item.id);
-          }}
-          isActive={item.id === detailsId}
-          isSelected={selectedCharacters?.has(item.id) || false}
-          onToggleSelection={() => onToggleSelection?.(item.id)}
-        />
-      ))}
+    <div className="h-full overflow-y-auto">
+      <div className="flex flex-wrap gap-4 p-2 justify-center items-center">
+        {items?.map((item) => (
+          <CharacterCard
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            status={item.status}
+            species={item.species}
+            image={item.image}
+            location={item.location}
+            origin={item.origin}
+            action={() => {
+              setDetailsId(item.id);
+            }}
+            isActive={item.id === detailsId}
+            isSelected={selectedCharacters?.has(item.id) || false}
+            onToggleSelection={() => onToggleSelection?.(item.id)}
+          />
+        ))}
+      </div>
     </div>
   );
 };

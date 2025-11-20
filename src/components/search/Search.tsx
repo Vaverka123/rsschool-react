@@ -29,13 +29,15 @@ const Search = ({ onSearch }: SearchProps) => {
   };
 
   return (
-    <div className="flex items-center space-x-9 max-w-md mx-auto">
+    <div className="flex flex-col items-center space-y-4 max-w-md mx-auto">
       <input
+        name="search input"
         ref={inputRef}
         type="text"
         className="px-4 py-2 border rounded"
         placeholder="enter name"
         onChange={handleInputChange}
+        autoComplete="off"
       />
       <Button onClick={handleSearch}>Search</Button>
     </div>

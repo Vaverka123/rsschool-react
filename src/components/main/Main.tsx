@@ -227,16 +227,8 @@ const Main: FC<MainProps> = () => {
 
   return (
     <>
-      <nav>
-        <Link
-          to="/about"
-          className="m-4 flex flex-col justify-center items-center border-2 border-red-500 border-dashed rounded-lg p-2 hover:bg-red-100 transition-colors duration-300 cursor-pointer tracking-widest uppercase text-red-500 font-bold text-l"
-        >
-          about this app author
-        </Link>
-      </nav>
-      <div className="m-4 p-4 bg-gray-100  space-y-6 border-2 border-blue-500 border-dashed rounded-lg">
-        <h1 className="mt-5 text-xl font-bold text-center text-blue-700 tracking-widest uppercase">
+      <div className="m-4 p-4 bg-gray-300/40 space-y-6 border-2 border-blue-500 border-dashed rounded-lg">
+        <h1 className="mt-5 text-xl font-bold text-center text-blue-700/90 tracking-widest uppercase">
           Search for your favorite Rick and Morty characters <br />
           and learn more about them!
         </h1>
@@ -250,7 +242,12 @@ const Main: FC<MainProps> = () => {
           {error && <Fallback text={error} />}
           {isSearched && (
             <div className="parent opened flex">
-              <div style={{ width: `${detailsId ? '50%' : '100%'}` }}>
+              <div
+                className="flex flex-col min-h-0"
+                style={{
+                  width: `${detailsId ? '60%' : '100%'}`,
+                }}
+              >
                 <CardList
                   items={characters}
                   setDetailsId={setDetailsIdWithParams}
@@ -260,18 +257,25 @@ const Main: FC<MainProps> = () => {
                 />
               </div>
               {detailsId && (
-                <div style={{ width: '50%' }}>
+                <div
+                  style={{
+                    width: '40%',
+                  }}
+                >
                   <DetailsCard id={detailsId} cancel={cancel} />
                 </div>
               )}
             </div>
           )}
+
           {selectedCharacters.size > 0 && (
-            <SelectedCardsMenu
-              selected={selectedCharacters.size}
-              removeAll={() => setSelectedCharacters(new Set())}
-              download={() => handleDownloadSelectedCharacters()}
-            />
+            <div className="flex-shrink-0">
+              <SelectedCardsMenu
+                selected={selectedCharacters.size}
+                removeAll={() => setSelectedCharacters(new Set())}
+                download={() => handleDownloadSelectedCharacters()}
+              />
+            </div>
           )}
         </div>
 
@@ -303,7 +307,17 @@ const Main: FC<MainProps> = () => {
           )}
         </div>
       </div>
+
       <Outlet />
+
+      <nav>
+        <Link
+          to="/about"
+          className="m-4 flex flex-col justify-center items-center border-2 border-red-500 border-dashed rounded-lg p-2 hover:bg-red-100 transition-colors duration-300 cursor-pointer tracking-widest uppercase text-red-500 font-bold text-l"
+        >
+          about this app author
+        </Link>
+      </nav>
     </>
   );
 };

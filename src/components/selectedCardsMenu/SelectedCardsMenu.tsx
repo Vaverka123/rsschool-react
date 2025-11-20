@@ -13,7 +13,7 @@ const SelectedCardsMenu: FC<SelectedCardsMenuProps> = ({
   download,
 }) => {
   return (
-    <div className="fixed top-0 left-0 right-0 bg-zinc-800 p-4 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 opacity-100 p-4 shadow-lg">
       <h2 className="text-lg font-semibold text-white text-center">
         {selected} items are selected
       </h2>

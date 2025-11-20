@@ -36,7 +36,7 @@ const CharacterCard: FC<CharacterData> = ({
       <button
         title="Open detailed view"
         onClick={handleClick}
-        className={`w-[500px] max-w-lg h-auto sm:h-[170px] flex rounded overflow-hidden cursor-pointer ${isActive ? 'bg-zinc-800 relative' : ' bg-zinc-600'}`}
+        className={`w-[400px] max-w-lg h-auto sm:h-[170px] flex rounded overflow-hidden cursor-pointer ${isActive ? 'bg-zinc-800 relative' : ' bg-zinc-600'}`}
       >
         <div>
           <img src={image || ''} alt={name} className="h-full object-cover" />
