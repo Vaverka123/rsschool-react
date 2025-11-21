@@ -89,7 +89,7 @@ describe('DetailsCard Component', () => {
       expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
     });
 
-    const closeButton = screen.getByText('X close details view X');
+    const closeButton = screen.getByText('X close detail view X');
     await userEvent.click(closeButton);
 
     expect(mockCancel).toHaveBeenCalledTimes(1);
