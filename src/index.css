@@ -26,12 +26,18 @@ html {
 
 body {
   overflow: auto;
-  background: url(assets/background.webp) center no-repeat;
-  margin: 60px 0;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  height: 100vh;
+  width: 100%;
+
+  background-image: url(assets/background.webp);
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   scrollbar-width: thin;
   scrollbar-color: #888 #444;
+  padding: 60px 0;
 }
