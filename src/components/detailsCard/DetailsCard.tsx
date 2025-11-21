@@ -38,21 +38,14 @@ const DetailsCard: FC<DetailsCardProps> = ({ id, cancel }) => {
     <>
       {!isLoading && dataByID ? (
         <div
-          className={`m-6 flex flex-col rounded bg-zinc-400 sticky top-4 w-[300px]`}
+          className={`m-auto flex flex-col rounded bg-zinc-400 w-[300px] fixed top-[10px] right-[10px]`}
         >
-          <button
-            className="bg-red-300 mx-auto p-2 m-2 w-fit rounded-md text-black font-semibold hover:bg-red-400 transition-colors duration-300 cursor-pointer"
-            onClick={cancel}
-          >
-            X close details view X
-          </button>
-
           <div className="flex flex-col  text-left p-4 flex-1 text-white   space-y-2 overflow-auto">
-            <div className=" flex items-center justify-center h-[200px] rounded overflow-hidden ">
+            <div className=" flex items-center justify-center h-[200px]  overflow-hidden ">
               <img
                 src={dataByID.image || ''}
                 alt={dataByID.name}
-                className="h-full object-cover"
+                className="h-full object-cover rounded-md"
               />
             </div>
             <p className="text-sm text-gray-300">#{dataByID.id}</p>
@@ -88,6 +81,13 @@ const DetailsCard: FC<DetailsCardProps> = ({ id, cancel }) => {
               </span>
             </div>
           </div>
+
+          <button
+            className="bg-red-300 mx-auto p-2 m-2 w-fit rounded-md text-black font-semibold hover:bg-red-400 transition-colors duration-300 cursor-pointer"
+            onClick={cancel}
+          >
+            X close detail view X
+          </button>
         </div>
       ) : (
         <LoadingBar />

@@ -233,7 +233,7 @@ const Main: FC<MainProps> = () => {
           and learn more about them!
         </h1>
         <Search onSearch={handleSearch} />
-        <div className=" h-[55vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
+        <div className=" h-[80vh] overflow-y-auto bg-zinc-700 rounded-lg shadow-md">
           {isLoading && (
             <div>
               <LoadingBar />
@@ -241,27 +241,17 @@ const Main: FC<MainProps> = () => {
           )}
           {error && <Fallback text={error} />}
           {isSearched && (
-            <div className="parent opened flex">
-              <div
-                className="flex flex-col min-h-0"
-                style={{
-                  width: `${detailsId ? '60%' : '100%'}`,
-                }}
-              >
-                <CardList
-                  items={characters}
-                  setDetailsId={setDetailsIdWithParams}
-                  detailsId={detailsId}
-                  selectedCharacters={selectedCharacters}
-                  onToggleSelection={toggleCharacterSelection}
-                />
-              </div>
+            <div className="parent flex flex-col-reverse lg:flex-row gap-4 justify-evenly p-4">
+              <CardList
+                items={characters}
+                setDetailsId={setDetailsIdWithParams}
+                detailsId={detailsId}
+                selectedCharacters={selectedCharacters}
+                onToggleSelection={toggleCharacterSelection}
+              />
+
               {detailsId && (
-                <div
-                  style={{
-                    width: '40%',
-                  }}
-                >
+                <div>
                   <DetailsCard id={detailsId} cancel={cancel} />
                 </div>
               )}
