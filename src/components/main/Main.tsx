@@ -240,7 +240,7 @@ const Main: FC<MainProps> = () => {
             </div>
           )}
           {error && <Fallback text={error} />}
-          {isSearched && (
+          {isSearched && !isLoading && (
             <div className="parent flex flex-col-reverse lg:flex-row gap-4 justify-evenly p-4">
               <CardList
                 items={characters}
